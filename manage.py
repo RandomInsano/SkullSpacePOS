@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 '''
     This will act as a staging area for working with the data and grow outward
 '''
