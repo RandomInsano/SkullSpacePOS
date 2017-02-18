@@ -9,7 +9,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from schema import Base, User, Product, Purchase
 
-from ui import ProductTable
+from ui import ProductTable, ProductEditor
 
 engine = create_engine("sqlite:///main.db")
 Session = sessionmaker(bind=engine)
@@ -19,9 +19,17 @@ def main():
 
     conn = Session()
 
-    table = ProductTable(conn.query(Product))
+    editor = ProductEditor()
+    table = ProductTable(conn.query(Product), editor)
 
-    loop = urwid.MainLoop(table)
+    header = urwid.Text("Product Editor")
+    body = urwid.Pile([
+        urwid.LineBox(table),
+        (10, urwid.LineBox(urwid.Filler(editor, 'top'))),
+    ])
+    document = urwid.Frame(body, header)
+
+    loop = urwid.MainLoop(document)
     loop.run()
 
 main()
