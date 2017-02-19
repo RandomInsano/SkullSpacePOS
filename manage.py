@@ -29,27 +29,33 @@ def main():
     ])
     document = urwid.Frame(body, header)
 
+    def focus_editor():
+        ''' Focus cursor on the editor '''
+        body.focus_position = 1
+
+    def focus_list():
+        ''' Focus cursor on the list of products '''
+        body.focus_position = 0
+
+
     def new_product():
         product = Product()
         product.ensure_defaults()
         conn.add(product)
         editor.set(product)
 
-        # Go to editor
-        body.focus_position = 1
-
     def key_input(key):
         if key in ['ctrl n']:
             new_product()
-
-        if key in ['enter']:
-            body.focus_position = 1
+            focus_editor()
 
     def list_edit_click(product):
         editor.set(product)
+        focus_editor()
 
     def new_product_click(button):
         new_product()
+        focus_editor()
 
     def commit_editor_click(button):
         editor.commit()
@@ -57,8 +63,7 @@ def main():
         editor.refresh()
         table.update()
 
-        # Go to product list
-        body.focus_position = 0
+        focus_list()
 
     # Open to suggestions on how ugly this is...
     urwid.connect_signal(editor._save_button, 'click', commit_editor_click)
