@@ -102,6 +102,9 @@ class ProductRow(urwid.Columns):
         self._qty.set_text(str(product.qty))
         self._upc.set_text(product.upc)
 
+    def contains(self, product):
+        return self._product is product
+
 class ProductTable(urwid.WidgetWrap):
     def __init__(self):
         self._sizing = 'fixed'
@@ -119,6 +122,12 @@ class ProductTable(urwid.WidgetWrap):
         for product_row in self._items:
             if hasattr(product_row, 'update'):
                 product_row.update()
+
+    def remove_item(self, product):
+        # Ugh... Linear search :'(
+        for item in self._items:
+            if item.contains(product):
+                self._items.remove(item)
 
     def add_item(self, product, edit_event):
         row = ProductRow(product, edit_event)

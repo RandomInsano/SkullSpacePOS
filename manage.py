@@ -43,7 +43,6 @@ def main():
 
         product = Product()
         product.ensure_defaults()
-        conn.add(product)
         editor.set(product)
 
     def key_input(key):
@@ -61,15 +60,23 @@ def main():
 
     def commit_editor_click(button):
         editor.commit()
+        conn.add(product)
         conn.commit()
         editor.refresh()
         table.update()
 
         focus_list()
 
+    def delete_editor_click(button):
+        table.remove_item(editor._product)
+        conn.delete(editor._product)
+        conn.commit()
+        new_product()
+
     # Open to suggestions on how ugly this is...
     urwid.connect_signal(editor._save_button, 'click', commit_editor_click)
     urwid.connect_signal(editor._new_button, 'click', new_product_click)
+    urwid.connect_signal(editor._delete_button, 'click', delete_editor_click)
 
     # Fill product table
     for product in conn.query(Product):
