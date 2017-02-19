@@ -10,14 +10,16 @@ COL_DIVIDER_WIDTH = 2
 
 class ProductEditor(urwid.Pile):
     def __init__(self):
-        self.row = None
+        self._product = None
 
         self._id = urwid.Text("ID:        ")
         self._name = urwid.Edit("Name:     ")
         self._cost = urwid.Edit("Cost:     ")
         self._qty = urwid.IntEdit("Quantity: ")
         self._barcode = urwid.Edit("Barcode:  ")
-        self._save_button = urwid.Button("save")
+        self._save_button = urwid.Button("update")
+        self._new_button = urwid.Button("new")
+
 
         controls = [
             self._id,
@@ -26,33 +28,35 @@ class ProductEditor(urwid.Pile):
             self._qty,
             self._barcode,
             self._save_button,
+            self._new_button
         ]
 
         super(ProductEditor, self).__init__(controls)
 
-    def _commit(self):
-        product = self._row._product
+    def commit(self):
+        product = self._product
 
         product.name = self._name.edit_text
         product.cost = float(self._cost.edit_text)
         product.qty = int(self._qty.edit_text)
         product.upc = self._barcode.edit_text
-        self._row.update()
 
-    def set(self, row):
-        self._row = row
-        product = row._product
+    def refresh(self):
+        if not hasattr(self, '_product'):
+            return
 
-        def on_save_click(button):
-            self._commit()
-
-        urwid.connect_signal(self._save_button, 'click', on_save_click)
+        product = self._product
 
         self._id.set_text("ID:       {0}".format(product.id))
-        self._name.edit_text = product.name
-        self._cost.edit_text = str(product.cost)
-        self._qty.edit_text = str(product.qty)
-        self._barcode.edit_text = product.upc
+        self._name.edit_text = product.name if product.name is not None else ""
+        self._cost.edit_text = str(product.cost if product.cost is not None else "0.00?")
+        self._qty.edit_text = str(product.qty if product.qty is not None else "1?")
+        self._barcode.edit_text = product.upc if product.upc is not None else ""
+
+    def set(self, product):
+        self._product = product
+        self.refresh()
+
 
 class ProductRow(urwid.Columns):
     def __init__(self, product, editor):
@@ -68,7 +72,7 @@ class ProductRow(urwid.Columns):
         edit_button = urwid.Button("edit")
 
         def on_edit_click(button):
-            self._editor.set(self)
+            self._editor.set(self._product)
 
         urwid.connect_signal(edit_button, 'click', on_edit_click)
 
@@ -83,7 +87,7 @@ class ProductRow(urwid.Columns):
 
         self.update()
 
-        super(ProductRow, self).__init__(values, dividechars=COL_DIVIDER_WIDTH)
+        urwid.Columns.__init__(self, widget_list=values, dividechars=COL_DIVIDER_WIDTH)
 
     def update(self):
         product = self._product
@@ -114,6 +118,11 @@ class ProductTable(urwid.ListBox):
             self.add_item(product)
 
         super(ProductTable, self).__init__(urwid.SimpleFocusListWalker(self._items))
+
+    def update(self):
+        for product_row in self._items:
+            if hasattr(product_row, 'update'):
+                product_row.update()
 
     def add_item(self, product):
         row = ProductRow(product, self._editor)

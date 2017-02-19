@@ -4,7 +4,16 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
-class User(Base):
+Base = declarative_base()
+class ItemBase(Base):
+    ''' Taken from http://stackoverflow.com/a/22947975/187769 '''
+    __abstract__ = True
+    def ensure_defaults(self):
+        for column in self.__table__.c:
+            if getattr(self, column.name) is None and column.default is not None and column.default.is_scalar:
+                setattr(self, column.name, column.default.arg)
+
+class User(ItemBase):
     ''' Person doing the buying '''
     __tablename__ = 'user'
 
@@ -17,27 +26,27 @@ class User(Base):
     # Are they an admin
     is_admin = Column(Boolean)
 
-class Product(Base):
+class Product(ItemBase):
     ''' Item for sale.'''
     __tablename__ = 'product'
 
     id = Column(Integer, primary_key=True)
     parent_id = Column(Integer, ForeignKey('product.id'))
     # Barcode for the particular product
-    upc = Column(String)
+    upc = Column(String, default="")
     # Human readable name
-    name = Column(String)
+    name = Column(String, default="")
     # How much this product is worth to customers. AKA suggested donation amount
-    cost = Column(Float)
+    cost = Column(Float, default=0.00)
     # How many do we have in stock
-    qty = Column(Integer)
+    qty = Column(Integer, default=1)
     # Products can contain other products like a 24 can box of softy drinkums
     contains = relationship("Product", remote_side=[id])
     # How man child prodcts does this have?
-    contains_qty = Column(Integer)
+    contains_qty = Column(Integer, default=1)
     pass
 
-class Purchase(Base):
+class Purchase(ItemBase):
     ''' Keeps track of who bought what '''
     __tablename__ = 'purchase'
 
@@ -48,7 +57,7 @@ class Purchase(Base):
     # How many items did they buy this purchase
     qty = Column(Integer)
     # Cost. Because we're a donation after all
-    cost = Column(Float)
+    cost = Column(Float, default=1.00)
     # Who bought the thing
     user = Column(Integer, ForeignKey('user.id'))
     # What was the thing?
