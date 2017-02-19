@@ -30,9 +30,9 @@ class ProductEditor(urwid.WidgetWrap):
         display_widget = urwid.Pile([
             self._id,
             self._name,
+            self._barcode,
             self._cost,
             self._qty,
-            self._barcode,
             button_flow
         ])
 
