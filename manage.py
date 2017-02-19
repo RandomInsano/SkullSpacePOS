@@ -37,8 +37,10 @@ def main():
         ''' Focus cursor on the list of products '''
         body.focus_position = 0
 
-
     def new_product():
+        if editor._product is not None and editor._product.id is None:
+            return
+
         product = Product()
         product.ensure_defaults()
         conn.add(product)
