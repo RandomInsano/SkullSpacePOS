@@ -64,9 +64,8 @@ class ProductEditor(urwid.WidgetWrap):
 
 
 class ProductRow(urwid.Columns):
-    def __init__(self, product, editor):
+    def __init__(self, product, edit_event):
         self._product = product
-        self._editor = editor
 
         self._id = urwid.Text("")
         self._name = urwid.Text("")
@@ -77,7 +76,7 @@ class ProductRow(urwid.Columns):
         edit_button = urwid.Button("edit")
 
         def on_edit_click(button):
-            self._editor.set(self._product)
+            edit_event(self._product)
 
         urwid.connect_signal(edit_button, 'click', on_edit_click)
 
@@ -104,18 +103,14 @@ class ProductRow(urwid.Columns):
         self._upc.set_text(product.upc)
 
 class ProductTable(urwid.WidgetWrap):
-    def __init__(self, products, editor):
+    def __init__(self):
         self._sizing = 'fixed'
 
-        self._editor = editor
-        self._items = []
-
-        for product in products:
-            self.add_item(product)
+        self._items = urwid.SimpleFocusListWalker([])
 
         display_widget = urwid.Frame(
             header=urwid.Text("ID    Name                              Cost   Qty  Barcode"),
-            body=urwid.ListBox(urwid.SimpleFocusListWalker(self._items))
+            body=urwid.ListBox(self._items)
         )
 
         urwid.WidgetWrap.__init__(self, display_widget)
@@ -125,7 +120,7 @@ class ProductTable(urwid.WidgetWrap):
             if hasattr(product_row, 'update'):
                 product_row.update()
 
-    def add_item(self, product):
-        row = ProductRow(product, self._editor)
+    def add_item(self, product, edit_event):
+        row = ProductRow(product, edit_event)
 
         self._items.append(row)

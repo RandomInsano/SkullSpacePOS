@@ -20,7 +20,7 @@ def main():
     conn = Session()
 
     editor = ProductEditor()
-    table = ProductTable(conn.query(Product), editor)
+    table = ProductTable()
 
     header = urwid.Text("Product Editor")
     body = urwid.Pile([
@@ -35,9 +35,18 @@ def main():
         conn.add(product)
         editor.set(product)
 
+        # Go to editor
+        body.focus_position = 1
+
     def key_input(key):
         if key in ['ctrl n']:
             new_product()
+
+        if key in ['enter']:
+            body.focus_position = 1
+
+    def list_edit_click(product):
+        editor.set(product)
 
     def new_product_click(button):
         new_product()
@@ -48,9 +57,16 @@ def main():
         editor.refresh()
         table.update()
 
+        # Go to product list
+        body.focus_position = 0
+
     # Open to suggestions on how ugly this is...
     urwid.connect_signal(editor._save_button, 'click', commit_editor_click)
     urwid.connect_signal(editor._new_button, 'click', new_product_click)
+
+    # Fill product table
+    for product in conn.query(Product):
+        table.add_item(product, list_edit_click)
 
     loop = urwid.MainLoop(document, unhandled_input=key_input)
 
