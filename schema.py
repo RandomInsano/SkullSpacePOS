@@ -1,10 +1,11 @@
-from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
 class User(Base):
+    ''' Person doing the buying '''
     __tablename__ = 'user'
 
     # Users will be identified by barcode / swipe card
@@ -13,6 +14,8 @@ class User(Base):
     name = Column(String)
     # Contact address
     email = Column(String)
+    # Are they an admin
+    is_admin = Column(Boolean)
 
 class Product(Base):
     ''' Item for sale.'''
@@ -24,7 +27,7 @@ class Product(Base):
     upc = Column(String)
     # Human readable name
     name = Column(String)
-    # How much this product is worth to customers
+    # How much this product is worth to customers. AKA suggested donation amount
     cost = Column(Float)
     # How many do we have in stock
     qty = Column(Integer)
@@ -38,6 +41,17 @@ class Purchase(Base):
     ''' Keeps track of who bought what '''
     __tablename__ = 'purchase'
 
+    # Some unique indentifier doodle
     id = Column(Integer, primary_key=True)
+    # When did the purchase happen
     date = Column(DateTime)
+    # How many items did they buy this purchase
+    qty = Column(Integer)
+    # Cost. Because we're a donation after all
+    cost = Column(Float)
+    # Who bought the thing
+    user = Column(Integer, ForeignKey('user.id'))
+    # What was the thing?
+    product = Column(Integer, ForeignKey('product.id'))
+
     pass
