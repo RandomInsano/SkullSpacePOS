@@ -25,7 +25,7 @@ def main():
     header = urwid.Text("Product Editor")
     body = urwid.Pile([
         urwid.LineBox(table),
-        (10, urwid.LineBox(urwid.Filler(editor, 'top'))),
+        (8, urwid.LineBox(urwid.Filler(editor, 'top'))),
     ])
     document = urwid.Frame(body, header)
 

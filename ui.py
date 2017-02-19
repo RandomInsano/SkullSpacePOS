@@ -48,7 +48,7 @@ class ProductEditor(urwid.Pile):
 
         urwid.connect_signal(self._save_button, 'click', on_save_click)
 
-        self._id.set_text("ID:{0:8}".format(product.id))
+        self._id.set_text("ID:       {0}".format(product.id))
         self._name.edit_text = product.name
         self._cost.edit_text = str(product.cost)
         self._qty.edit_text = str(product.qty)
@@ -110,17 +110,12 @@ class ProductTable(urwid.ListBox):
         # Headers here
         self._items.append(urwid.Columns(headers, dividechars=COL_DIVIDER_WIDTH))
 
-        # New item button
-        new_button = urwid.Button("new")
-        temp_column = urwid.Columns([(7, new_button)])
-        self._items.append(temp_column)
-
         for product in products:
             self.add_item(product)
 
-        super(ProductTable, self).__init__(urwid.SimpleListWalker(self._items))
+        super(ProductTable, self).__init__(urwid.SimpleFocusListWalker(self._items))
 
     def add_item(self, product):
         row = ProductRow(product, self._editor)
 
-        self._items.insert(-1, row)
+        self._items.append(row)
