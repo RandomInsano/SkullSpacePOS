@@ -8,7 +8,7 @@ COL_WIDTH_BARCODE = 15
 COL_WIDTH_EDITBUTTON = 10
 COL_DIVIDER_WIDTH = 2
 
-class ProductEditor(urwid.Pile):
+class ProductEditor(urwid.WidgetWrap):
     def __init__(self):
         self._product = None
 
@@ -17,21 +17,26 @@ class ProductEditor(urwid.Pile):
         self._cost = urwid.Edit("Cost:     ")
         self._qty = urwid.IntEdit("Quantity: ")
         self._barcode = urwid.Edit("Barcode:  ")
-        self._save_button = urwid.Button("update")
+        self._save_button = urwid.Button("save")
         self._new_button = urwid.Button("new")
+        self._delete_button = urwid.Button("delete")
 
+        button_flow = urwid.GridFlow([
+            self._save_button,
+            self._new_button,
+            self._delete_button
+        ], 10, 1, 0, 'left')
 
-        controls = [
+        display_widget = urwid.Pile([
             self._id,
             self._name,
             self._cost,
             self._qty,
             self._barcode,
-            self._save_button,
-            self._new_button
-        ]
+            button_flow
+        ])
 
-        super(ProductEditor, self).__init__(controls)
+        urwid.WidgetWrap.__init__(self, display_widget)
 
     def commit(self):
         product = self._product
@@ -47,7 +52,7 @@ class ProductEditor(urwid.Pile):
 
         product = self._product
 
-        self._id.set_text("ID:       {0}".format(product.id))
+        self._id.set_text("ID:       {0}".format(product.id if product.id is not None else "[new]"))
         self._name.edit_text = product.name if product.name is not None else ""
         self._cost.edit_text = str(product.cost if product.cost is not None else "0.00?")
         self._qty.edit_text = str(product.qty if product.qty is not None else "1?")
@@ -98,26 +103,22 @@ class ProductRow(urwid.Columns):
         self._qty.set_text(str(product.qty))
         self._upc.set_text(product.upc)
 
-class ProductTable(urwid.ListBox):
+class ProductTable(urwid.WidgetWrap):
     def __init__(self, products, editor):
+        self._sizing = 'fixed'
+
         self._editor = editor
         self._items = []
-
-        headers = [
-            (COL_WIDTH_ID, urwid.Text("ID")),
-            (COL_WIDTH_NAME, urwid.Text("Name")),
-            (COL_WIDTH_COST, urwid.Text("Cost")),
-            (COL_WIDTH_QTY, urwid.Text("Qty")),
-            (COL_WIDTH_BARCODE, urwid.Text("Barcode")),
-        ]
-
-        # Headers here
-        self._items.append(urwid.Columns(headers, dividechars=COL_DIVIDER_WIDTH))
 
         for product in products:
             self.add_item(product)
 
-        super(ProductTable, self).__init__(urwid.SimpleFocusListWalker(self._items))
+        display_widget = urwid.Frame(
+            header=urwid.Text("ID    Name                              Cost   Qty  Barcode"),
+            body=urwid.ListBox(urwid.SimpleFocusListWalker(self._items))
+        )
+
+        urwid.WidgetWrap.__init__(self, display_widget)
 
     def update(self):
         for product_row in self._items:
