@@ -62,6 +62,9 @@ class ProductEditor(urwid.WidgetWrap):
         self._product = product
         self.refresh()
 
+    def get(self):
+        return self._product
+
 
 class ProductRow(urwid.Columns):
     def __init__(self, product, edit_event):

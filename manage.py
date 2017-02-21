@@ -38,7 +38,7 @@ def main():
         body.focus_position = 0
 
     def new_product():
-        if editor._product is not None and editor._product.id is None:
+        if editor.get() is not None and editor.get().id is None:
             return
 
         product = Product()
@@ -60,7 +60,7 @@ def main():
 
     def commit_editor_click(button):
         editor.commit()
-        conn.add(product)
+        conn.add(editor.get())
         conn.commit()
         editor.refresh()
         table.update()
@@ -68,8 +68,8 @@ def main():
         focus_list()
 
     def delete_editor_click(button):
-        table.remove_item(editor._product)
-        conn.delete(editor._product)
+        table.remove_item(editor.get())
+        conn.delete(editor.get())
         conn.commit()
         new_product()
 
