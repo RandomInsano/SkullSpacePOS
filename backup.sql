@@ -19,6 +19,14 @@ INSERT INTO "product" VALUES(5,NULL,'05492935','Dr. Pepper (355ml)',1.0,1,1);
 INSERT INTO "product" VALUES(6,NULL,'077290902765','Pearson''s Mint Patties',0.25,1,1);
 INSERT INTO "product" VALUES(7,NULL,'06224017','Canada Dry Ginger Ale (355ml)',1.0,1,1);
 INSERT INTO "product" VALUES(8,NULL,'06541432','7up (355ml)',1.0,1,1);
+INSERT INTO "product" VALUES(9,NULL,'058496839604','Skittles Original (36x61g)',0.0,1,1);
+INSERT INTO "product" VALUES(10,NULL,'06782900','Coke (355ml)',1.0,1,1);
+INSERT INTO "product" VALUES(11,NULL,'071117618082','Baja Cafe (Beef & Bean / Bean & Cheese 24x)',0.0,1,1);
+INSERT INTO "product" VALUES(12,NULL,'071117011302','Baja Cafe Beef & Bean Burrito',1.0,1,1);
+INSERT INTO "product" VALUES(13,NULL,'07117011302','Baja Cafe Bean & Cheese Burrito',1.0,1,1);
+INSERT INTO "product" VALUES(14,NULL,'096619818143','Kirkland Microwave Popcorn (44x)',0.0,1,1);
+INSERT INTO "product" VALUES(15,NULL,'063209072377','Tim Hortons Dark Roast Cups',0.25,5,1);
+INSERT INTO "product" VALUES(16,NULL,'063209057282','Tim Hortons Original Cups',0.25,1,1);
 CREATE TABLE user (
 	id VARCHAR NOT NULL, 
 	name VARCHAR, 
