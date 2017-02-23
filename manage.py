@@ -50,6 +50,10 @@ def main():
             new_product()
             focus_editor()
 
+        if key in ('q', 'Q'):
+            raise urwid.ExitMainLoop()
+
+
     def list_edit_click(product):
         editor.set(product)
         focus_editor()
