@@ -8,14 +8,37 @@ COL_WIDTH_BARCODE = 15
 COL_WIDTH_EDITBUTTON = 10
 COL_DIVIDER_WIDTH = 2
 
+class NumericEdit(urwid.Edit):
+    def __init__(self, text, num_type):
+        self.num_type = num_type
+
+        super().__init__(text)
+
+        def filter_keys(ch):
+            ''' Don't allow characters that would cause parsing errors '''
+            try:
+                text = self.edit_text
+                text = text[:self.edit_pos] + ch + text[self.edit_pos:]
+
+                _ = self.num_type(text)
+                return ch
+            except:
+                pass
+
+        self.valid_char = filter_keys
+
+    def value(self):
+        return self.num_type(self.edit_text)
+
+
 class ProductEditor(urwid.WidgetWrap):
     def __init__(self):
         self._product = None
 
         self._id = urwid.Text("ID:        ")
         self._name = urwid.Edit("Name:     ")
-        self._cost = urwid.Edit("Cost:     ")
-        self._qty = urwid.IntEdit("Quantity: ")
+        self._cost = NumericEdit("Cost:     ", float)
+        self._qty = NumericEdit("Quantity: ", int)
         self._barcode = urwid.Edit("Barcode:  ")
         self._save_button = urwid.Button("save")
         self._new_button = urwid.Button("new")
@@ -42,8 +65,8 @@ class ProductEditor(urwid.WidgetWrap):
         product = self._product
 
         product.name = self._name.edit_text
-        product.cost = float(self._cost.edit_text)
-        product.qty = int(self._qty.edit_text)
+        product.cost = self._cost.value()
+        product.qty = self._qty.value()
         product.upc = self._barcode.edit_text
 
     def refresh(self):
