@@ -17,7 +17,7 @@ CREATE TABLE product (
 	PRIMARY KEY (id)
 );
 INSERT INTO "product" VALUES(1,'069000070000','Brisk Lemonaide (355ml)',1.0,1);
-INSERT INTO "product" VALUES(2,'096619818136','Kirkland Mircowave Popcorn (1x)',1.0,1);
+INSERT INTO "product" VALUES(2,'096619818136','Kirkland Mircowave Popcorn',1.0,1);
 INSERT INTO "product" VALUES(3,'06942508','Pepsi (355ml)',1.0,1);
 INSERT INTO "product" VALUES(4,'069000014257','Diet Pepsi (355ml)',1.0,1);
 INSERT INTO "product" VALUES(5,'05492935','Dr. Pepper (355ml)',1.0,1);
@@ -27,8 +27,8 @@ INSERT INTO "product" VALUES(8,'06541432','7up (355ml)',1.0,1);
 INSERT INTO "product" VALUES(9,'058496839604','Skittles Original (36x61g)',0.0,1);
 INSERT INTO "product" VALUES(10,'06782900','Coke (355ml)',1.0,1);
 INSERT INTO "product" VALUES(11,'071117618082','Baja Cafe (Beef & Bean / Bean & Cheese 24x)',0.0,1);
-INSERT INTO "product" VALUES(12,'071117011302','Baja Cafe Beef & Bean Burrito',1.0,1);
-INSERT INTO "product" VALUES(13,'07117011302','Baja Cafe Bean & Cheese Burrito',1.0,1);
+INSERT INTO "product" VALUES(12,'071117011340','Baja Cafe Beef & Bean Burrito',1.0,1);
+INSERT INTO "product" VALUES(13,'071117011302','Baja Cafe Bean & Cheese Burrito',1.0,1);
 INSERT INTO "product" VALUES(14,'096619818143','Kirkland Microwave Popcorn (44x)',0.0,1);
 INSERT INTO "product" VALUES(15,'063209072377','Tim Hortons Dark Roast Cups',0.25,5);
 INSERT INTO "product" VALUES(16,'063209057282','Tim Hortons Original Cups',0.25,1);
@@ -43,8 +43,8 @@ CREATE TABLE contains_product (
 INSERT INTO "contains_product" VALUES(11,12,12);
 INSERT INTO "contains_product" VALUES(11,13,12);
 INSERT INTO "contains_product" VALUES(14,2,44);
-INSERT INTO "contains_product" VALUES(15,15,50);
-INSERT INTO "contains_product" VALUES(16,16,50);
+INSERT INTO "contains_product" VALUES(15,15,14);
+INSERT INTO "contains_product" VALUES(16,16,14);
 CREATE TABLE "transaction" (
 	id INTEGER NOT NULL, 
 	date DATETIME, 
