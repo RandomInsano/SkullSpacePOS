@@ -26,12 +26,38 @@ class User(ItemBase):
     # Are they an admin
     is_admin = Column(Boolean)
 
+
+class ContainsProduct(ItemBase):
+    '''
+        Mapping between products. Used when we buy some large box of drinks
+        that contains different flavours. Hit this case with those delightful
+        burritos.
+
+        Also, it is possible that a product doesn't have a barcode (poptarts are
+        a good example). Since we need to rely on the container's barcode
+        both to restock three bags of tarts and for consumers buying one,
+        poptarts contain themselves.
+    '''
+    __tablename__ = 'contains_product'
+
+    # Who is the container
+    parent_id = Column(Integer, ForeignKey('product.id'), primary_key=True)
+    # What's it holding?
+    contains_id = Column(Integer, ForeignKey('product.id'), primary_key=True)
+    # How man child prodcts does the parent have?
+    qty = Column(Integer, default=1)
+
+    # Which parent can hold one of these products
+    parent = relationship('Product', back_populates='children', foreign_keys=[parent_id])
+    # Which product can this parent hold
+    child = relationship('Product', back_populates='parents', foreign_keys=[contains_id])
+
 class Product(ItemBase):
     ''' Item for sale.'''
     __tablename__ = 'product'
 
+    # Identifier
     id = Column(Integer, primary_key=True)
-    parent_id = Column(Integer, ForeignKey('product.id'))
     # Barcode for the particular product
     upc = Column(String, default="")
     # Human readable name
@@ -40,10 +66,9 @@ class Product(ItemBase):
     cost = Column(Float, default=0.00)
     # How many do we have in stock
     qty = Column(Integer, default=1)
-    # Products can contain other products like a 24 can box of softy drinkums
-    contains = relationship("Product", remote_side=[id])
-    # How man child prodcts does this have?
-    contains_qty = Column(Integer, default=1)
+
+    children = relationship("ContainsProduct", back_populates="parent", foreign_keys=[ContainsProduct.parent_id])
+    parents = relationship("ContainsProduct", back_populates="child", foreign_keys=[ContainsProduct.contains_id])
 
 class Purchase(ItemBase):
     ''' Keeps track of who bought what '''
