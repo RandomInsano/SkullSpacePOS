@@ -44,7 +44,6 @@ class Product(ItemBase):
     contains = relationship("Product", remote_side=[id])
     # How man child prodcts does this have?
     contains_qty = Column(Integer, default=1)
-    pass
 
 class Purchase(ItemBase):
     ''' Keeps track of who bought what '''
@@ -52,15 +51,21 @@ class Purchase(ItemBase):
 
     # Some unique indentifier doodle
     id = Column(Integer, primary_key=True)
-    # When did the purchase happen
-    date = Column(DateTime)
-    # How many items did they buy this purchase
+    # How many items did they buy
     qty = Column(Integer)
     # Cost. Because we're a donation after all
     cost = Column(Float, default=1.00)
-    # Who bought the thing
-    user = Column(Integer, ForeignKey('user.id'))
     # What was the thing?
     product = Column(Integer, ForeignKey('product.id'))
+    transaction = Column(Integer, ForeignKey('transaction.id'))
 
-    pass
+class Transaction(ItemBase):
+    ''' A collection of purchases to dedup some data '''
+    __tablename__ = 'transaction'
+
+    # Some unique indentifier
+    id = Column(Integer, primary_key=True)
+    # When did the transaction happen
+    date = Column(DateTime)
+    # Who bought the things
+    user = Column(Integer, ForeignKey('user.id'))
